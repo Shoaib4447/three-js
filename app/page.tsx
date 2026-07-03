@@ -1,65 +1,101 @@
-import Image from "next/image";
+'use client';
+
+import { useEffect } from 'react';
+import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/Addons.js';
+import rusty from '../public/textures/rusty.jpg';
 
 export default function Home() {
-  return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+  useEffect(() => {
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight, true);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.setAnimationLoop(animate);
+    document.body.appendChild(renderer.domElement);
+    const clock = new THREE.Clock();
+
+    // Cube Geometry
+    const cubegeometry = new THREE.BoxGeometry(3, 4, 4);
+    const texture = new THREE.TextureLoader().load(rusty.src);
+    const material = new THREE.MeshStandardMaterial({ map: texture, roughness: 0.5, metalness: 5 , emissive: 'red', emissiveIntensity: 1 });
+    const cube = new THREE.Mesh(cubegeometry, material);
+    cube.castShadow = true;
+    cube.receiveShadow = true;
+    // Directional Light, Ambient Light, Point Light, Spot Light, Hemisphere Light, RectArea Light
+    const light = new THREE.PointLight(0xffffff, 2, 20, 1);
+    light.position.set(1, 4, 6);
+    light.castShadow = true;
+    light.shadow.mapSize.width = 1024;
+    light.shadow.mapSize.height = 1024;
+
+
+
+    // Plane Geometry (floor)
+    const planeGeometry = new THREE.PlaneGeometry(100, 100);
+    const planeMaterial = new THREE.MeshStandardMaterial({ color: 0x888888 });
+    const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+    plane.rotation.x = -Math.PI / 2;
+    plane.position.y = -3;
+    plane.receiveShadow = true;
+
+    // const helperDirectionalLight = new THREE.PointLightHelper(light, 5, 0xff0000);
+    scene.add(cube, light, plane);
+
+
+    // Capsule Geometry
+    const capsuleGeometry = new THREE.CapsuleGeometry(1, 4, 0, 10);
+    const capsuleMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
+    const capsule = new THREE.Mesh(capsuleGeometry, capsuleMaterial);
+
+    // Circle Geometry
+    const circleGeometry = new THREE.CircleGeometry(5, 100);
+    const circleMaterial = new THREE.MeshBasicMaterial({ color: 'red', wireframe: true });
+    const circle = new THREE.Mesh(circleGeometry, circleMaterial);
+
+    // Line Geometry
+    const geometry = new THREE.BoxGeometry(6, 3, 4, 5, 6);
+    const edges = new THREE.EdgesGeometry(geometry);
+    const line = new THREE.LineSegments(edges);
+
+    // sphere Geometry
+    const sphereGeometry = new THREE.SphereGeometry(2, 100, 40, 0, Math.PI * 2, 0, Math.PI);
+    const sphereMaterial = new THREE.MeshBasicMaterial({ color: 'blue', wireframe: true });
+    const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+
+    // Scene
+    // scene.add(cube,light);
+
+    camera.position.z = 15;
+    // OrbitControls
+    const controls = new OrbitControls(camera, renderer.domElement);
+    // controls.autoRotate = true;
+    controls.autoRotateSpeed = 5.0;
+
+    controls.cursorStyle = 'grab';
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+
+
+
+    function animate(time: number) {
+      // window.requestAnimationFrame(animate);
+      // cube.rotation.x = time / 2000;
+      // cube.rotation.y = time / 1000;
+      // cube.rotation.y = clock.getElapsedTime();
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    return () => {
+      renderer.setAnimationLoop(null);
+      renderer.dispose();
+      document.body.removeChild(renderer.domElement);
+    };
+  }, []);
+
+  return null;
 }
