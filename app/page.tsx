@@ -1,57 +1,42 @@
 'use client';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { useRef } from 'react';
+import { Canvas } from '@react-three/fiber';
+import { OrbitControls } from '@react-three/drei';
+import { useRef, useState } from 'react';
+import * as THREE from 'three';
+// OrbitControls is a component that allows the user to rotate, zoom, and pan the camera around the scene using mouse or touch input. It is part of the @react-three/drei library, which provides useful helpers for react-three-fiber.
 
-const Box = ({ position }: { position: [number, number, number] }) => {
-  const meshRef = useRef<any>(null);
+const Box = () => {
+  const ref = useRef<THREE.Mesh>(null!);
+  const [hovered, setHovered] = useState(false);
 
-  {/*
-    useFrame(() => {
-    if (meshRef.current) {
-      meshRef.current.rotation.x += 0.01;
-      meshRef.current.rotation.y += 0.01;
-      //  USE SIN FUNCTION TO CREATE A SMOOTH UP AND DOWN MOVEMENT
-      meshRef.current.position.y = Math.sin(Date.now() * 0.002) * 1.5; // Rotate around Y-axis
-      //  Pulse the scale of the box using a sine function
-      const scale = Math.sin(Date.now() * 0.002) * 0.5 + 1; // Scale oscillates between 0.5 and 1.5
-      meshRef.current.scale.set(scale, scale, scale);
-    }
-  });
-*/}
+  const handleClick = () => {
+    console.log('Box clicked');
+    ref.current.scale.x *= 1.1;
+  };
 
-  // Lerp animation 1 example: 
-  {/* useFrame((state, delta) => {
-    if (meshRef.current) {
-      // Rotate the box around the Y-axis
-      // meshRef.current.rotation.y += delta * 5; // Adjust rotation speed as needed
-      // console.log('delta', delta);
-      const targetX = state.mouse.x * 7; // Scale mouse X position to a suitable range
-      meshRef.current.position.x += (targetX - meshRef.current.position.x) * 0.1; // Smoothly interpolate to target position
+  const handlePointerOver = () => {
+    console.log('Pointer over box');
+    (ref.current.material as THREE.MeshStandardMaterial).color.set('blue');
+    document.body.style.cursor = 'pointer'; // Change cursor to help when hovering over the box
+    setHovered(true);
+  };
 
-
-    }
-  });
-  */}
-
-  // Lerp animation 2 example: 
-  useFrame((state, delta) => {
-    if (meshRef.current) {
-      // Rotate the box around the Y-axis
-      const t = state.clock.elapsedTime; 
-      meshRef.current.rotation.y = t * 0.5; // Rotate at a constant speed
-
-      // Smoothly interpolate the box's position based on mouse movement
-      // const targetX = state.mouse.x * 7;
-      // meshRef.current.position.x += (targetX - meshRef.current.position.x) * 0.1; // Smoothly interpolate to target position
-    }
-  });
-
-
+  const handlePointerOut = () => {
+    console.log('Pointer out of box');
+    (ref.current.material as THREE.MeshStandardMaterial).color.set('red');
+    document.body.style.cursor = 'default'; // Reset cursor when not hovering
+    setHovered(false);
+  };
 
   return (
-    <mesh ref={meshRef} position={position}>
+    <mesh
+      scale={hovered ? 1.5 : 1}
+      ref={ref}
+      onClick={handleClick} 
+      onPointerOver={handlePointerOver}
+      onPointerOut={handlePointerOut}>
       <boxGeometry />
-      <meshStandardMaterial color="red" />
+      <meshStandardMaterial color="red" roughness={0.1} metalness={0.1} emissive={2} wireframe={true} />
     </mesh>
   );
 }
@@ -62,12 +47,29 @@ export default function Home() {
     <Canvas
       gl={{ antialias: true }}
       camera={{ position: [0, 0, 5], fov: 15 }}
+      style={{ width: '100vw', height: '100vh', display: 'block' }}
     >
-      {/* <directionalLight position={[1, 2, 3]} intensity={1.5} /> */}
-      <ambientLight intensity={2} />
-      <Box position={[0, 0, 0]} />
-      <Box position={[2, 0, 0]} />
-      <Box position={[-2, 0, 0]} />
+      //Install react-three/drei for OrbitControls: npm install @react-three/drei
+      <OrbitControls
+      // enableZoom={true}           // Scroll to zoom
+      // enablePan={true}           // Disable pan for product views
+      // autoRotate={true}           // Auto spin
+      // autoRotateSpeed={16}       // Gentle auto-rotation
+      // enableDamping={true}        // Smooth inertia (default: true)
+      // dampingFactor={0.05}        // Lower = more lag/inertia
+      // minPolarAngle={Math.PI / 4} // Limit — can't go fully above
+      // maxPolarAngle={Math.PI / 2} // Limit — can't go below floor
+      // minDistance={10}             // Minimum zoom
+      // maxDistance={20}            // Maximum zoom
+      // target={[1, 0, 0]}          // Center of rotation
+      />
+
+      {/* Pointer Events (Click and drag to rotate, scroll to zoom, right-click and drag to pan) */}
+
+
+
+      <ambientLight intensity={1} />
+      <Box />
     </Canvas>
   )
 }
