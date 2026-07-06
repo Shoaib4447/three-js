@@ -59,11 +59,12 @@ export default function Home() {
       <OrbitControls />
 
 
-      <Box color="red" position={[3, 0, 0]} />
+      <Box color="red" position={[0, 0, 0]} />
 
       {/* Pointer Events (Click and drag to rotate, scroll to zoom, right-click and drag to pan) */}
-      <ambientLight intensity={2} />
-      <directionalLight intensity={0.1} position={[10, 1, 0]} />
+      {/* <ambientLight intensity={2} /> */}
+      {/* <directionalLight intensity={0.1} position={[10, 1, 0]} /> */}
+      <spotLight intensity={0.1} position={[0, 0, 0]} angle={1}  />
 
     </Canvas>
   )
