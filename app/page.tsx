@@ -26,6 +26,7 @@ const Model = () => {
         metalnessMap: metalnessMap,
         aoMap: aoMap,
         aoMapIntensity: 1,
+
       });
     }
   });
@@ -35,10 +36,15 @@ const Model = () => {
 
 
 const Box = ({ color, position }: { color: string; position: [number, number, number] }) => {
+  const texture = useTexture('/textures/metal/metal_0071_color_1k.jpg');
+  const texture2 = useTexture('/textures/metal/metal_0071_normal_opengl_1k.png');
+  const metalnessMap = useTexture('/textures/metal/metal_0071_metallic_1k.jpg');
+  const aoMap = useTexture('/textures/metal/metal_0071_ao_1k.jpg');
+  const roughnessMap = useTexture('/textures/metal/metal_0071_roughness_1k.jpg');
   return (
     <mesh position={position}  >
       <boxGeometry />
-      <meshStandardMaterial color={color} roughness={0.1} metalness={0.1} emissive={new THREE.Color(2, 2, 2)} />
+      <meshStandardMaterial color='red' roughness={0.2} metalness={0.1} map={texture} normalMap={texture2} metalnessMap={metalnessMap} aoMap={aoMap} aoMapIntensity={1} roughnessMap={roughnessMap} />
     </mesh>
   );
 }
@@ -47,17 +53,18 @@ const Box = ({ color, position }: { color: string; position: [number, number, nu
 export default function Home() {
   return (
     <Canvas
+
     >
       //Install react-three/drei for OrbitControls: npm install @react-three/drei
       <OrbitControls />
 
-      <Suspense fallback={null}>
-        <Model />
-      </Suspense>
+
+      <Box color="red" position={[3, 0, 0]} />
 
       {/* Pointer Events (Click and drag to rotate, scroll to zoom, right-click and drag to pan) */}
-      <ambientLight intensity={1} />
-      <directionalLight intensity={1} position={[5, 5, 5]} />
+      <ambientLight intensity={2} />
+      <directionalLight intensity={0.1} position={[10, 1, 0]} />
+
     </Canvas>
   )
 }
