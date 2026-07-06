@@ -3,15 +3,24 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { useRef, useState } from 'react';
 import * as THREE from 'three';
+import { useThree } from '@react-three/fiber'
 
 // Raycasting is how R3F determines which 3D object your mouse intersects. R3F handles it automatically for pointer events, but understanding it enables advanced interactions.
 
 const Box = ({ color, position }: { color: string; position: [number, number, number] }) => {
   const ref = useRef<THREE.Mesh>(null!);
+  const { raycaster, camera, scene } = useThree()
+
+  const checkIntersections = () => {
+    const intersects = raycaster.intersectObjects(scene.children)
+    if (intersects.length > 0) {
+      console.log('First hit:', intersects[0])
+    }
+  }
 
 
   return (
-    <mesh position={position} onClick={() => console.log(`${color} Box clicked! position: ${position}`)} >
+    <mesh position={position} onClick={(event) => checkIntersections()} >
       <boxGeometry />
       <meshStandardMaterial color={color} roughness={0.1} metalness={0.1} emissive={2}  />
     </mesh>
