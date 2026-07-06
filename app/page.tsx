@@ -7,7 +7,7 @@ import { Suspense } from 'react';
 
 const Model = () => {
   const { scene, nodes, materials } = useGLTF('/models/car.glb', true);
-  return <primitive object={scene} />;
+  return <primitive object={scene} scale={[1, 1, 1]} position={[0, -1, 0]} rotation={[0, Math.PI, 0]}/>;
 };
 
 
