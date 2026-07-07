@@ -1,32 +1,49 @@
 'use client';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Environment, PerspectiveCamera } from '@react-three/drei';
-import { useFrame } from '@react-three/fiber';
-import { useRef, useMemo, memo, useState } from 'react';
+import { OrbitControls} from '@react-three/drei';
+import React, { useEffect } from 'react';
 import * as THREE from 'three';
 
 
-const Box = memo(function Box({ color }: { color: string }) {
-  return (
-    <mesh position={[0, 0, 0]}>
-      <boxGeometry args={[1, 1, 1]} />
-      <meshStandardMaterial color={color} />
-    </mesh>
-  );
-});
 
+
+const InstancingBoxeds = () => {
+  console.log('InstancingBoxeds rendered');
+  const count = 1000;
+  const meshRef = React.useRef<THREE.InstancedMesh>(null);
+
+  useEffect(() => {
+    const temp = new THREE.Object3D();
+
+    for (let i = 0; i < count; i++) {
+      temp.position.set(
+        (Math.random() - 0.5) * 10,
+        (Math.random() - 0.5) * 10,
+        (Math.random() - 0.5) * 10
+      );
+      temp.updateMatrix();
+      meshRef.current?.setMatrixAt(i, temp.matrix);
+    }
+    if (meshRef.current) meshRef.current.instanceMatrix.needsUpdate = true;
+  }, []);
+
+  return (
+    <instancedMesh ref={meshRef} args={[undefined, undefined, count]}>
+      <boxGeometry args={[0.2, 0.2, 0.2]} />
+      <meshStandardMaterial color='red' metalness={8}/>
+    </instancedMesh>
+  )
+}
 export default function Home() {
-  const [count, setCount] = useState(1);
   return (
     <>
-      <button onClick={() => setCount(count + 1)}>Click me {count}</button>
       <Canvas
         shadows
         camera={{ position: [0, 2, 5], fov: 75 }}
       >
-        <Box color={'red'} />
-        <ambientLight intensity={2} />
-        {/* <spotLight intensity={0.1} position={[0, 0, 0]} angle={1}  /> */}
+        <ambientLight intensity={0.6} />
+        <directionalLight position={[10, 10, 5]} intensity={1} />
+        <InstancingBoxeds />
         <OrbitControls />
         {/* <Environment files={'https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/modern_evening_street_1k.hdr'} blur={0} background /> */}
       </Canvas>
