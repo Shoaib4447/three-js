@@ -42,29 +42,46 @@ const Box = ({ color, position }: { color: string; position: [number, number, nu
   const aoMap = useTexture('/textures/metal/metal_0071_ao_1k.jpg');
   const roughnessMap = useTexture('/textures/metal/metal_0071_roughness_1k.jpg');
   return (
-    <mesh position={position}  >
+    <mesh position={position} castShadow >
       <boxGeometry />
-      <meshStandardMaterial color='red' roughness={0.2} metalness={0.1} map={texture} normalMap={texture2} metalnessMap={metalnessMap} aoMap={aoMap} aoMapIntensity={1} roughnessMap={roughnessMap} />
+      <meshStandardMaterial color={color} roughness={1.2} metalness={0.1} map={texture} normalMap={texture2} metalnessMap={metalnessMap} aoMap={aoMap} aoMapIntensity={1} roughnessMap={roughnessMap} />
+    </mesh>
+  );
+}
+
+const Plane = () => {
+  return (
+    <mesh receiveShadow position={[0, -0.5, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+      <planeGeometry args={[100, 100]} />
+      <meshStandardMaterial color="white" />
     </mesh>
   );
 }
 
 
+
+
 export default function Home() {
   return (
     <Canvas
-
+      shadows
+      camera={{ position: [0, 2, 5], fov: 50 }}
     >
       //Install react-three/drei for OrbitControls: npm install @react-three/drei
       <OrbitControls />
 
 
-      <Box color="red" position={[0, 0, 0]} />
+      <Box color="red" position={[0, 0, 1]} />
+      <Plane />
 
       {/* Pointer Events (Click and drag to rotate, scroll to zoom, right-click and drag to pan) */}
-      {/* <ambientLight intensity={2} /> */}
-      {/* <directionalLight intensity={0.1} position={[10, 1, 0]} /> */}
-      <spotLight intensity={0.1} position={[0, 0, 0]} angle={1}  />
+      <ambientLight intensity={0.7} />
+      <directionalLight
+        intensity={4}
+        castShadow
+        position={[2, 4, 2]}
+        />
+      {/* <spotLight intensity={0.1} position={[0, 0, 0]} angle={1}  /> */}
 
     </Canvas>
   )
