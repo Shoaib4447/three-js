@@ -1,8 +1,10 @@
 'use client';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, useGLTF, useTexture, Environment } from '@react-three/drei';
+import React from 'react';
+import { OrbitControls, useGLTF, useTexture, Environment, useHelper } from '@react-three/drei';
 import { Suspense } from 'react';
 import * as THREE from 'three';
+import { DirectionalLightHelper } from 'three'
 
 // glb vs gltf: glb is a binary format, while gltf is a JSON format. glb is more efficient for transmission and loading, while gltf is more human-readable and easier to edit.
 
@@ -34,6 +36,18 @@ const Model = () => {
   return <primitive object={scene} scale={[1, 1, 1]} position={[0, -1, 0]} rotation={[0, Math.PI, 0]} />;
 };
 
+const LightHelper = () => {
+  const ref = React.useRef<THREE.DirectionalLight>(null!);
+  useHelper(ref, DirectionalLightHelper, 0.5, 'red');
+  return (
+    <directionalLight
+      ref={ref}
+      intensity={4}
+      castShadow
+      position={[2, 4, 2]}
+    />
+  )
+}
 
 const Box = ({ color, position }: { color: string; position: [number, number, number] }) => {
   // const texture = useTexture('/textures/metal/metal_0071_color_1k.jpg');
@@ -41,6 +55,8 @@ const Box = ({ color, position }: { color: string; position: [number, number, nu
   // const metalnessMap = useTexture('/textures/metal/metal_0071_metallic_1k.jpg');
   // const aoMap = useTexture('/textures/metal/metal_0071_ao_1k.jpg');
   // const roughnessMap = useTexture('/textures/metal/metal_0071_roughness_1k.jpg');
+
+
   return (
     <mesh position={position} castShadow >
       <sphereGeometry />
@@ -70,17 +86,13 @@ export default function Home() {
       //Install react-three/drei for OrbitControls: npm install @react-three/drei
 
 
-
+      <LightHelper />
       <Box color='white' position={[0, 0, 1]} />
       {/* <Plane /> */}
 
       {/* Pointer Events (Click and drag to rotate, scroll to zoom, right-click and drag to pan) */}
       <ambientLight intensity={0.1} />
-      <directionalLight
-        intensity={4}
-        castShadow
-        position={[2, 4, 2]}
-      />
+
       {/* <spotLight intensity={0.1} position={[0, 0, 0]} angle={1}  /> */}
       <OrbitControls />
       <Environment files={'https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/modern_evening_street_1k.hdr'} background />
