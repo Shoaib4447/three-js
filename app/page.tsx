@@ -1,12 +1,15 @@
 'use client';
-import { Canvas, useLoader } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei';
-import { GLTFLoader } from 'three/examples/jsm/Addons.js';
-import { Suspense } from 'react';
+import { Canvas } from '@react-three/fiber';
+import { OrbitControls,Stats , AdaptiveDpr, AdaptiveEvents, BakeShadows} from '@react-three/drei';
 
-const Model = () => {
-  const gltf = useLoader(GLTFLoader, '/models/car.glb');
-  return <primitive object={gltf.scene} />;
+
+const Box = () => {
+  return (
+    <mesh>
+      <boxGeometry args={[1, 1, 1]} />
+      <meshStandardMaterial color="orange" />
+    </mesh>
+  );
 };
 
 
@@ -17,13 +20,12 @@ export default function Home() {
         shadows
         camera={{ position: [0, 0, 4], fov: 75 }}
       >
+        <Stats />
+        <AdaptiveDpr pixelated />
+        <AdaptiveEvents />
         <ambientLight intensity={2} />
-       
         <OrbitControls />
-        <Suspense fallback={null}>
-          <Model />
-        </Suspense>
-        
+        <Box /> 
       </Canvas>
     </>
   )
