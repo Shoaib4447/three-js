@@ -12,7 +12,7 @@ const Box = () => {
   useEffect(() => {
     if (boxRef.current) {
       gsap.from(boxRef.current.position, {
-        y: -5,
+        x: -5,
         duration: 1.2,
         ease: 'elastic.out(1, 0.5)',
         delay: 0.3,
@@ -26,8 +26,8 @@ const Box = () => {
       })
 
       gsap.to(boxRef.current.material, {
-        metalness: 1,
-        roughness: 0,
+        metalness: 1.6,
+        roughness: 0.3,
         duration: 1.5,
         delay: 0.3,
       })
