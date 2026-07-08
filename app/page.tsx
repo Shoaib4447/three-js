@@ -63,13 +63,16 @@ export default function Home() {
     <div style={{height: '200vh' }} className='section'>
       <Canvas
         shadows
-        camera={{ position: [0, 0, 5]}}
+        camera={{ position: [0, 0, 5], fov: 75 }}
       >
         <ambientLight intensity={2} />
         <OrbitControls />
+
+        <axesHelper args={[5]} />
+        <gridHelper args={[10, 10]} />
         <Box />
-        <EffectComposer>
-          <Bloom luminanceThreshold={0} luminanceSmoothing={0.9} height={300} intensity={6} mipmapBlur />
+        {/* <EffectComposer> */}
+          {/* <Bloom luminanceThreshold={0} luminanceSmoothing={0.9} height={300} intensity={6} mipmapBlur /> */}
           {/* <ChromaticAberration
             offset={[0.002, 0.002]}
           /> */}
@@ -82,8 +85,8 @@ export default function Home() {
           /> */}
 
           {/* List all effects */}
-          <BrightnessContrast brightness={0.1} contrast={0.1} />
-        </EffectComposer>
+          {/* <BrightnessContrast brightness={0.1} contrast={0.1} /> */}
+        {/* </EffectComposer> */}
       </Canvas>
     </div>
     </>
