@@ -12,17 +12,29 @@ const Box = () => {
   const boxRef = React.useRef<THREE.Mesh>(null);
   useEffect(() => {
     if (boxRef.current) {
-      gsap.to(boxRef.current.position,
-        {
-          x: -4,
-          locomotive: true,
-          scrollTrigger: {
-            trigger: ".section",
-            start: "top top",
-            end: "bottom top",
-            scrub: true, 
-          }
-        });
+      gsap.registerPlugin(ScrollTrigger);
+      const tl = gsap.timeline();
+
+      // Move
+      tl.to(boxRef.current.position, {
+        x: 2,
+        duration: 1,
+      });
+
+      // Rotate
+      tl.to(boxRef.current.rotation, {
+        y: Math.PI * 2,
+        duration: 1,
+      });
+
+      // Scale
+      tl.to(boxRef.current.scale, {
+        x: 2,
+        y: 2,
+        z: 2,
+        duration: 1,
+      });
+
     }
   }, []);
 
