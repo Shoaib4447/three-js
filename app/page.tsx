@@ -5,32 +5,21 @@ import { EffectComposer, Bloom, ChromaticAberration, Vignette, DepthOfField, Bri
 import React, { useEffect } from 'react';
 import gsap from 'gsap';
 import * as THREE from 'three';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 
 const Box = () => {
   const boxRef = React.useRef<THREE.Mesh>(null);
   useEffect(() => {
     if (boxRef.current) {
-      gsap.from(boxRef.current.position, {
-        x: -5,
-        duration: 1.2,
-        ease: 'elastic.out(1, 0.5)',
-        delay: 0.3,
-      })
-
-      gsap.to(boxRef.current.rotation, {
-        y: Math.PI * 2,
-        duration: 8,
-        repeat: -1,
-        ease: 'none',
-      })
-
-      gsap.to(boxRef.current.material, {
-        metalness: 1.6,
-        roughness: 0.3,
-        duration: 1.5,
-        delay: 0.3,
-      })
+      gsap.to(boxRef.current.position,
+        {
+          x: 2,
+          duration: 2,
+          repeat: -1,
+          yoyo: true,
+          ease: "power1.inOut"
+        });
     }
   }, []);
 
@@ -64,7 +53,7 @@ export default function Home() {
         <OrbitControls />
         <Box />
         <EffectComposer>
-          {/* <Bloom luminanceThreshold={0} luminanceSmoothing={0.9} height={300} intensity={6} mipmapBlur /> */}
+          <Bloom luminanceThreshold={0} luminanceSmoothing={0.9} height={300} intensity={6} mipmapBlur />
           {/* <ChromaticAberration
             offset={[0.002, 0.002]}
           /> */}
