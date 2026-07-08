@@ -14,11 +14,14 @@ const Box = () => {
     if (boxRef.current) {
       gsap.to(boxRef.current.position,
         {
-          x: 2,
-          duration: 2,
-          repeat: -1,
-          yoyo: true,
-          ease: "power1.inOut"
+          x: -4,
+          locomotive: true,
+          scrollTrigger: {
+            trigger: ".section",
+            start: "top top",
+            end: "bottom top",
+            scrub: true, 
+          }
         });
     }
   }, []);
@@ -45,9 +48,10 @@ const Plane = () => {
 export default function Home() {
   return (
     <>
+    <div style={{height: '200vh' }} className='section'>
       <Canvas
         shadows
-        camera={{ position: [0, 0, 4], fov: 75 }}
+        camera={{ position: [0, 0, 5]}}
       >
         <ambientLight intensity={2} />
         <OrbitControls />
@@ -69,6 +73,7 @@ export default function Home() {
           <BrightnessContrast brightness={0.1} contrast={0.1} />
         </EffectComposer>
       </Canvas>
+    </div>
     </>
   )
 }
